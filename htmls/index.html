@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Боты в коробке</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .container {
+        max-width: 90% !important;
+      }
+    </style>
+    <script src="/assets/js/jquery-3.7.1.min.js"></script>
+    <script>
+      $(() => {
+        var table_body = $('#boxed-bots-table-body')
+        $.ajax({
+          'url': '/boxed-bots.json'
+        }).done((bots) => {
+          bots.forEach(bot => {
+            var table_row = $('<tr>', {
+              'id': `${bot.id}`
+            }).appendTo(table_body);
+            
+            var bot_link = $('<td>', {
+              'id': `${bot.id}-link`
+            }).appendTo(table_row);
+            
+            $('<a>', {
+              'href': bot.path,
+              'text': bot.name
+            }).appendTo(bot_link);
+            
+            $('<td>', {
+              'id': `${bot.id}-description`,
+              'text': bot.description
+            }).appendTo(table_row);
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Боты в коробке</h1>
+      <hr>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Ссылка</th>
+            <th>Описание</th>
+          </tr>
+        </thead>
+        <tbody id="boxed-bots-table-body">
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

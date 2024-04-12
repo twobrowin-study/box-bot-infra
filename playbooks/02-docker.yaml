@@ -1,0 +1,70 @@
+---
+#############################################################################
+#      0) Взять секреты из vault и добавить SSH ключи в known_hosts         #
+#############################################################################
+
+- name: Pull secrets from vault
+  hosts: all
+  gather_facts: false
+  tags:
+    - always
+  roles:
+    - role: bmstu.vats.init
+      vault_path_secrets: boxed-bots/data/main,infrastructure-secrets.yaml
+
+#############################################################################
+#                1) Подготовка конфигураций Nginx                           #
+#############################################################################
+
+- name: Copy nginx configs and htmls
+  hosts: managers
+  tags:
+    - prepare
+  tasks:
+    - name: Add read permission on certs dir
+      become: yes
+      file:
+        name: "{{ letsencrypt_path }}"
+        mode: "u=rwX,g=rwX,o=rX"
+        recurse: yes
+    
+    - name: Config nginx configs and html
+      copy:
+        src:  "../{{ item }}/"
+        dest: "{{ home }}/{{ item }}/"
+      with_items:
+        - nginx
+        - htmls
+    
+    - name: Create nginx config dirs
+      file:
+        name: "{{ home }}/{{ item }}"
+        state: directory
+      with_items:
+        - nginx/boxed-bots
+        - htmls/boxed-bots
+
+#############################################################################
+#              2) Запуск сервисов Nginx и Keycloak                          #
+#############################################################################
+
+- name: Run nginx and keycloak
+  hosts: managers
+  tags:
+    - deploy
+  roles:
+    - role: bmstu.vats.generic_deploy
+      compose_template_path: ../docker/docker-compose.j2.yaml
+
+      nginx:
+        port_http:  80
+        port_https: 443
+      
+      placement:
+        nginx:    boxed-bots
+        keycloak: boxed-bots
+        keycloak_postgres: boxed-bots
+
+      stack_name:  boxed-bots
+      stack_prune: false
+      workdir:     "{{ home }}/boxed-bots"
