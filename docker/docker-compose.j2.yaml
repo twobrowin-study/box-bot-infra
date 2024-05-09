@@ -9,7 +9,7 @@ x-logging:
 
 services:
   nginx:
-    image: nginx:1.25.4
+    image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405060805
     logging: *default-logging
     ports:
       - target:    {{ nginx.port_http }}
@@ -31,6 +31,7 @@ services:
     volumes:
       - "{{ home }}/nginx:/etc/nginx/templates:ro"
       - "{{ home }}/htmls:/usr/share/nginx/html:ro"
+      - "{{ home }}/empty.sh:/docker-entrypoint.d/92-update-real_ip.sh"
       - "{{ letsencrypt_path }}:{{ letsencrypt_path }}:ro"
     environment:
       TZ: Europe/Moscow

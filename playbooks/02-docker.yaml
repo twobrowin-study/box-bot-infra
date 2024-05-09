@@ -28,6 +28,11 @@
         mode: "u=rwX,g=rwX,o=rX"
         recurse: yes
     
+    - name: Create empty file
+      file:
+        name: "{{ home }}/empty.sh"
+        state: touch
+    
     - name: Config nginx configs and html
       copy:
         src:  "../{{ item }}/"
