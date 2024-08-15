@@ -20,6 +20,10 @@ services:
         published: {{ nginx.port_https }}
         protocol:  tcp
         mode:      host
+      - target:    {{ nginx.port_additional }}
+        published: {{ nginx.port_additional }}
+        protocol:  tcp
+        mode:      host
     healthcheck:
       test:     curl -k --fail http://localhost/healthz || exit 1
       interval: 60s

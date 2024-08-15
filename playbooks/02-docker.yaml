@@ -64,6 +64,7 @@
       nginx:
         port_http:  80
         port_https: 443
+        port_additional: 8080
       
       placement:
         nginx:    boxed-bots
