@@ -67,9 +67,9 @@
         port_additional: 8080
       
       placement:
-        nginx:    boxed-bots
-        keycloak: boxed-bots
-        keycloak_postgres: boxed-bots
+        nginx:    boxed-bots-master-01
+        keycloak: boxed-bots-master-01
+        keycloak_postgres: boxed-bots-master-01
 
       stack_name:  boxed-bots
       stack_prune: false
